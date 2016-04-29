@@ -1,0 +1,5 @@
+dofile(getinstalldir().."UOBots/scripts/config.lua")
+while true do
+	dofile(PATH.Scripts.."allautoblacksmithy.lua")
+	wait(60000)
+end
