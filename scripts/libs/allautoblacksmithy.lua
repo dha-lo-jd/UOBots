@@ -1,8 +1,12 @@
-dofile("config.lua")
+dofile("../config.lua")
+dofile(PATH.Libs..'utils.lua')
 dofile(PATH.Downloads..'FluentUO/FluentUO.lua')
+dofile(PATH.Libs..'utils.lua')
 local tile  = dofile(PATH.Downloads..'uofiles_10.lua')
 tile.init(PATH.Resource)
 local mineCheck = dofile(PATH.Libs..'mining_check.lua')
+dofile(PATH.Libs..'journalEx.lua')
+local myjournal = journal:new()
 
 local PATHFIND_FAIL = "Can't get there"
 
@@ -13,6 +17,8 @@ local oreAllTypes = {[6585]=1,[6583]=1,[6584]=1,[6586]=1}
 local oreMainType = 6585
 local oreSubTypes = {[6583]=1,[6584]=1,[6586]=1}
 
+local miningToolTypes = {3718,3897}
+
 local forgePos = {x=2559,y=501,z=0}
 local forgeSubPos = {x=2566,y=486,z=0}
 local anvilPos = {x=2559,y=501,z=0}
@@ -20,56 +26,53 @@ local anvilPos = {x=2559,y=501,z=0}
 local weaponVendorId = 20584
 
 local miningPositions = {
-		{x=2558,y=497,z=0},
-		{x=2561,y=494,z=0},
-		{x=2564,y=491,z=0},
-		{x=2570,y=488,z=0},
-		{x=2574,y=485,z=0},
-		{x=2578,y=483,z=0},
-		{x=2578,y=479,z=0},
-		{x=2575,y=476,z=0},
-		{x=2572,y=476,z=0},
-		{x=2569,y=476,z=0},
-		{x=2567,y=478,z=0},
-		{x=2565,y=482,z=0},
-		{x=2563,y=485,z=0},
-		{x=2561,y=488,z=0},
-		{x=2560,y=490,z=0},
-		{x=2559,y=493,z=0},
-	}
+	{x=2558,y=497,z=0},
+	{x=2561,y=494,z=0},
+	{x=2564,y=491,z=0},
+	{x=2570,y=488,z=0},
+	{x=2574,y=485,z=0},
+	{x=2578,y=483,z=0},
+	{x=2578,y=479,z=0},
+	{x=2575,y=476,z=0},
+	{x=2572,y=476,z=0},
+	{x=2569,y=476,z=0},
+	{x=2567,y=478,z=0},
+	{x=2565,y=482,z=0},
+	{x=2563,y=485,z=0},
+	{x=2561,y=488,z=0},
+	{x=2560,y=490,z=0},
+	{x=2559,y=493,z=0},
+}
 
 local townRoutes = {
-		{x=2559,y=501,z=0},
-		{x=2527,y=502,z=15},
-		{x=2527,y=511,z=11},
-		{x=2520,y=518,z=0},
-		{x=2510,y=518,z=0},
-		{x=2490,y=535,z=0},
-		{x=2490,y=561,z=1},
-	}
+	{x=2559,y=501,z=0},
+	{x=2527,y=502,z=15},
+	{x=2527,y=511,z=11},
+	{x=2520,y=518,z=0},
+	{x=2510,y=518,z=0},
+	{x=2490,y=535,z=0},
+	{x=2490,y=561,z=1},
+}
 
 local weaponShopRoutes = {
-		{x=2482,y=569,z=5},
-		{x=2473,y=569,z=5},
-	}
+	{x=2482,y=569,z=5},
+	{x=2473,y=569,z=5},
+}
 
 local bankRoutes = {
-		{x=2495,y=560,z=0},
-	}
+	{x=2495,y=560,z=0},
+}
 
 local oreBag = World().WithID(bagId).Items[1]
 if oreBag == nil then
 --	stop()
 end
 
-local myjournal = journal:new()
-function FindNextJournal(timeout,...)
-	myjournal:waitAny(timeout)
-	return myjournal:find(...)
-end
-
 function GetTileId(pos)
 	local cnt = tile.count(pos.x,pos.y,pos.z)
+	if cnt == nil then
+		return nil
+	end
 	for idx=1,cnt do
 		local t = tile.get(pos.x,pos.y,pos.z,idx)
 		local tileid,tileflag,tilename,tilez = unpack(t or {})
@@ -81,6 +84,9 @@ function GetTileId(pos)
 end
 function GetTileName(pos)
 	local cnt = tile.count(pos.x,pos.y,pos.z)
+	if cnt == nil then
+		return nil
+	end
 	for idx=1,cnt do
 		local t = tile.get(pos.x,pos.y,pos.z,idx)
 		local tileid,tileflag,tilename,tilez = unpack(t or {})
@@ -98,57 +104,6 @@ function ClickG(pos)
 	UO.LTargetY = pos.y
 	UO.LTargetZ = pos.z
 	UO.Macro(22,0)
-end
-
-function GetMaxWeight()
-         if UO.CharType == 401 then
-            return UO.Str * 3.5 + 100
-         else
-            return UO.Str * 3.5 + 40
-         end
-end
-
-function IsOverWeight()
-	return GetMaxWeight() - UO.Weight < 20
-end
-
-function PosOf(vx,vy,vz)
-	return {x=vx,y=vy,z=vz}
-end
-
-function GetCharPos()
-	return PosOf(UO.CharPosX,UO.CharPosY,UO.CharPosZ)
-end
-
-function GetItemPos(item)
-	return PosOf(item.X,item.Y,item.Z)
-end
-
-function IsSamePos(posa,posb)
-	return posa.x == posb.x and posa.y == posb.y
-end
-
-function Offset(pos,offsetX,offsetY)
-	pos.x = pos.x + offsetX
-	pos.y = pos.y + offsetY
-	return pos
-end
-
-function UseTargetingItem(item)
-	while not UO.TargCurs do
-		item.Use(true)
-		wait(10)
-	end
-end
-
-function TargetByItem(id)
-	UO.LTargetID = id
-	UO.LTargetKind = 1
-	UO.Macro(22,0)
-end
-
-function IsCharPos(pos)
-	return IsSamePos(GetCharPos(),pos)
 end
 
 function WalkTo(pos)
@@ -194,11 +149,13 @@ function MoveTo(pos)
 end
 
 function TryPathfind(pos)
+	myjournal:clear()
 	UO.Pathfind(pos.x,pos.y,pos.z)
-	return not FindNextJournal(1000,PATHFIND_FAIL)
+	return not myjournal:findNextJournal(1000,PATHFIND_FAIL)
 end
 
 function PathfindTo(pos)
+	print("last pathfind "..pos.x..","..pos.y)
 	while not IsCharPos(pos) do
 		UO.TargCurs = true
 		UO.Pathfind(pos.x,pos.y,pos.z)
@@ -312,54 +269,90 @@ function OrganizeIngot()
 end
 
 local digged = {}
+local diggedScore = {}
+local diggedScorePrev = {}
+
+function GetPosMapX(map,pos)
+	local x = pos.x
+	if map[x] == nil then
+		map[x] = {}
+	end
+	return map[x]
+end
+
+function GetPosMap(map,pos)
+	return GetPosMapX(map,pos)[pos.y]
+end
 
 function IsDiggedAt(pos)
-	local x = pos.x
-	local y = pos.y
-	if digged[x] == nil then
-		digged[x] = {}
-	end
-	if digged[x][y] ~= nil then
+	if GetPosMap(digged,pos) ~= nil then
 		return true
 	else
 		return false
 	end
 end
 
-function EndDigAt(pos)
-	local x = pos.x
-	local y = pos.y
-	if digged[x] == nil then
-		digged[x] = {}
+function GetDigScorePrev(pos)
+	local score = GetPosMap(diggedScorePrev,pos)
+	if score == nil then
+		score = 0
 	end
-	digged[x][y] = 1
+	return score
+end
+
+function GetDigScore(pos)
+	local score = GetPosMap(diggedScore,pos)
+	if score == nil then
+		score = 2 + GetDigScorePrev(pos)
+		if score > 100 then
+			score = 100
+		end
+		SetDigScorePrev(pos,score)
+	end
+	return score
+end
+
+function SetDigScorePrev(pos,score)
+	GetPosMapX(diggedScorePrev,pos)[pos.y] = score
+end
+
+function SetDigScore(pos,score)
+	GetPosMapX(diggedScore,pos)[pos.y] = score
+end
+
+function EndDigAt(pos)
+	GetPosMapX(digged,pos)[pos.y] = GetDigScore(pos)
 end
 
 function PathfindWithRecovery(pos)
 	if not TryPathfind(pos) then
 		PathfindTo(forgeSubPos)
+		wait(3000)
 	end
 	PathfindTo(pos)
+end
+
+function GetMiningTool()
+	return Backpack().Where(function(item) return miningToolTypes[item.Type] ~= nil end).Items[1]
 end
 
 function Dig(pos)
 	if IsDiggedAt(pos) then
 		return
 	end
-	local pickAxe = Backpack().WithType(3718).Items[1]
-	if pickAxe == nil then
+	local miningTool = GetMiningTool()
+	if miningTool == nil then
 		stop()
 	else
-		UseTargetingItem(pickAxe)
+		UseTargetingItem(miningTool)
 		mineCheck:ready()
 		ClickG(pos)
-		mineCheck:waitFor(3000)
 		if mineCheck.check() then
-			wait(200)
+			SetDigScore(pos,1)
 		else
 			EndDigAt(pos)
-			wait(50)
 		end
+		wait(1)
 	end
 end
 
@@ -388,8 +381,12 @@ function AreaDigAll()
 	end
 end
 
+function GetOres()
+	return World().Where(function(item) return oreAllTypes[item.Type] ~= nil and item.Stack >= 2 end).Items
+end
+
 function SmeltingOre(forge)
-	local ores = World().Where(function(item) return oreAllTypes[item.Type] ~= nil end).Items
+	local ores = GetOres()
 	for i=1,#ores do
 		local ore = ores[i]
 		UseTargetingItem(ore)
@@ -416,10 +413,10 @@ function Smelting()
 	end
 
 	SmeltingOre(forge)
-	local ores = World().Where(function(item) return oreAllTypes[item.Type] ~= nil and item.Stack >= 2 end).Items
+	local ores = GetOres()
 	while #ores > 0 do
 		SmeltingOre(forge)
-		ores = World().Where(function(item) return oreAllTypes[item.Type] ~= nil and item.Stack >= 2 end).Items
+		ores = GetOres()
 	end
 end
 
@@ -441,28 +438,42 @@ function DoWeaponShopWork()
 end
 
 function DoBankWork()
-	BankWalker:DoJob(function()
-		UO.Macro(4,0,"bank")
-		OrganizeIngot()
-		wait(500)
-	end)
+	UO.Macro(4,0,"bank")
+	wait(500)
+	OrganizeIngot()
+	wait(500)
+end
+
+function BankWork()
+	BankWalker:DoJob(DoBankWork)
 end
 
 function DoTownWork()
 	TownWalker:DoJob(function()
 		--DoWeaponShopWork()
-		DoBankWork()
+		BankWork()
 	end)
 end
 
-if IsOverWeight() then
-	Smelting()
+function DoAllWork()
+	for i=1,#miningPositions do
+		local miningPosition = miningPositions[i]
+		PathfindWithRecovery(miningPosition)
+		AreaDigAll()
+	end
+	UpdateDigged()
 end
-for i=1,#miningPositions do
-	local miningPosition = miningPositions[i]
-	PathfindWithRecovery(miningPosition)
-	AreaDigAll()
+
+function UpdateDigged()
+	for k1,diggedX in pairs(digged) do
+		for k2,diggedXY in pairs(digged) do
+			if diggedXY ~= nil then
+				diggedXY = diggedXY - 1
+				if diggedXY <= 0 then
+					diggedXY = nil
+				end
+			end
+			digged[k1][k2] = diggedXY
+		end
+	end
 end
-Smelting()
-DoTownWork()
---Smelting()

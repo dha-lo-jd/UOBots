@@ -11,10 +11,10 @@ journal.hasNext = function(state)
 	return true
 end
 
-journal.waitAny = function(state,TimeOUT)
+journal.waitCondition = function(state,condition,TimeOUT)
 	TimeOUT = getticks() + TimeOUT
 	repeat
-		if state:hasNext() then
+		if condition() then
 			return true
 		end
 		wait(1)
@@ -22,7 +22,22 @@ journal.waitAny = function(state,TimeOUT)
 	return false
 end
 
+journal.waitAny = function(state,TimeOUT)
+	local f = function()
+		return state:hasNext()
+	end
+	return state:waitCondition(f,TimeOUT)
+end
+
 journal.wait = function(state,TimeOUT,...)
+	local args = ...
+	local f = function()
+		return state:find(args)
+	end
+	return state:waitCondition(f,TimeOUT)
+end
+
+journal.findNextJournal = function(state,TimeOUT,...)
 	state:waitAny(TimeOUT)
 	return state:find(...)
 end

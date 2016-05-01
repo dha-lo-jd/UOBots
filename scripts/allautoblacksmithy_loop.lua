@@ -1,5 +1,13 @@
-dofile("config.lua")
+dofile(getinstalldir().."UOBots/scripts/config.lua")
+dofile(PATH.Libs..'utils.lua')
+dofile(PATH.Libs..'allautoblacksmithy.lua')
 while true do
-	dofile(PATH.scripts.."allautoblacksmithy.lua")
-	wait(60000)
+	if IsOverWeight() then
+		Smelting()
+	end
+	DoAllWork()
+	Smelting()
+	dofile(PATH.Scripts.."smithing.lua")
+	DoTownWork()
+	wait(1000 * 60 * 10)
 end

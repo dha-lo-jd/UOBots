@@ -7,23 +7,20 @@ local myjournal = journal:new()
 local MINING_START = "Where do you wish to dig"
 local MINING_FAIL = "You loosen some rocks"
 local MINING_SUCCESS = "You dig some"
+local MINING_GEM = "You have found"
 
 function cls:ready()
-myjournal:clear()
+	myjournal:clear()
 end
 
 function cls:isPickAxeUsing()
-   return myjournal:find(MINING_START)
-end
-
-function cls:waitFor(timeout)
-myjournal:waitAny(timeout)
+	return myjournal:findNextJournal(1000,MINING_START)
 end
 
 function cls:check()
-local res = myjournal:find(MINING_FAIL,MINING_SUCCESS)
-myjournal:clear()
-return res
+	local res = myjournal:findNextJournal(1000,MINING_FAIL,MINING_SUCCESS,MINING_GEM)
+	myjournal:clear()
+	return res
 end
 
 return cls
