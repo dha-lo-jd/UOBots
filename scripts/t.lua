@@ -1,7 +1,7 @@
-dofile(getinstalldir().."UOBots/scripts/config.lua")
-dofile(PATH.Libs..'utils.lua')
-dofile(PATH.Downloads..'FluentUO/FluentUO.lua')
-local Click = dofile(PATH.Libs..'click.lua')
+dofile(getinstalldir() .. "UOBots/scripts/config.lua")
+dofile(PATH.Libs .. 'utils.lua')
+dofile(PATH.Downloads .. 'FluentUO/FluentUO.lua')
+local Click = dofile(PATH.Libs .. 'click.lua')
 
 function work()
 	local k = Backpack().WithType(3553).Items[1]
@@ -14,10 +14,10 @@ function work()
 	while not UO.TargCurs do
 		Backpack().WithType(3922).Items[1].Use(true)
 		wait(600)
-	end               
+	end
 	while UO.TargCurs do
-	Click.Left(389,254)
-	wait(600)
+		Click.Left(389, 254)
+		wait(600)
 	end
 end
 

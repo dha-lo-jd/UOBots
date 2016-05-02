@@ -1,9 +1,9 @@
-dofile(PATH.Downloads..'FluentUO/FluentUO.lua')
-local Click = dofile(PATH.Libs..'click.lua')
+dofile(PATH.Downloads .. 'FluentUO/FluentUO.lua')
+local Click = dofile(PATH.Libs .. 'click.lua')
 
 local mainFunc = function(options)
-	local smeltButtonPos = {x=30,y=350}
-	local makeLastButtonPos = {x=285,y=415}
+	local smeltButtonPos = { x = 30, y = 350 }
+	local makeLastButtonPos = { x = 285, y = 415 }
 
 	local crafter = {}
 
@@ -17,11 +17,11 @@ local mainFunc = function(options)
 	function crafter.TargetByItem(id)
 		UO.LTargetID = id
 		UO.LTargetKind = 1
-		UO.Macro(22,0)
+		UO.Macro(22, 0)
 	end
 
 	function crafter.CheckMaterial(material)
-		local mitem =  Backpack().WithType(material.typeId).WithCol(0).Items[1]
+		local mitem = Backpack().WithType(material.typeId).WithCol(0).Items[1]
 		if mitem == nil then
 			return false
 		end
@@ -29,7 +29,7 @@ local mainFunc = function(options)
 	end
 
 	function crafter:CheckMaterials()
-		for i=1,#self.materials do
+		for i = 1, #self.materials do
 			local material = self.materials[i]
 			if not self.CheckMaterial(material) then
 				return false
@@ -126,7 +126,7 @@ local mainFunc = function(options)
 	CloseSmithGump()
 end
 
-return mainfunc
+return mainFunc
 
 
 

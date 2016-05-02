@@ -1,4 +1,4 @@
-dofile(PATH.Downloads..'FluentUO/FluentUO.lua')
+dofile(PATH.Downloads .. 'FluentUO/FluentUO.lua')
 
 local tinkerToolTypeId = 7864
 local pickaxeTypeId = 3718
@@ -6,34 +6,36 @@ local tongTypeId = 4027
 local ingotTypeId = 7154
 
 local smithingGumpId = 62276
-local smeltButtonPos = {x=30,y=350}
-local makeLastButtonPos = {x=285,y=415}
+local smeltButtonPos = { x = 30, y = 350 }
+local makeLastButtonPos = { x = 285, y = 415 }
 
 Click = {}
 local C = Click
 
-function C.Left(x,y)
-	UO.Click(x,y,true,true,true,false)
+function C.Left(x, y)
+	UO.Click(x, y, true, true, true, false)
 end
 
-function C.Right(x,y)
-	UO.Click(x,y,false,true,true,false)
+function C.Right(x, y)
+	UO.Click(x, y, false, true, true, false)
 end
 
-function C.Gump(x,y)
-	C.Left(UO.ContPosX+x,UO.ContPosY+y)
+function C.Gump(x, y)
+	C.Left(UO.ContPosX + x, UO.ContPosY + y)
 end
+
 function C.GumpPos(pos)
-	C.Gump(pos.x,pos.y)
+	C.Gump(pos.x, pos.y)
 end
+
 function C.CloseGump()
-	C.Right(UO.ContPosX+UO.ContSizeX/2,UO.ContPosY+UO.ContSizeY/2)
+	C.Right(UO.ContPosX + UO.ContSizeX / 2, UO.ContPosY + UO.ContSizeY / 2)
 end
 
 function TargetByItem(id)
 	UO.LTargetID = id
 	UO.LTargetKind = 1
-	UO.Macro(22,0)
+	UO.Macro(22, 0)
 end
 
 function GetIngot()

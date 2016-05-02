@@ -1,21 +1,21 @@
-dofile(getinstalldir().."UOBots/scripts/config.lua")
-dofile(PATH.Libs..'utils.lua')
-dofile(PATH.Downloads..'FluentUO/FluentUO.lua')
-local Click = dofile(PATH.Libs..'click.lua')
-local Gump = dofile(PATH.Libs..'gump_craft.lua')
+dofile(getinstalldir() .. "UOBots/scripts/config.lua")
+dofile(PATH.Libs .. 'utils.lua')
+dofile(PATH.Downloads .. 'FluentUO/FluentUO.lua')
+local Click = dofile(PATH.Libs .. 'click.lua')
+local Gump = dofile(PATH.Libs .. 'gump_craft.lua')
 
 local tongTypeId = 4027
 local ingotTypeId = 7154
 local createItemId = 3932
 
 local smithingGumpId = 62276
-local smeltButtonPos = {x=30,y=350}
-local makeLastButtonPos = {x=285,y=415}
+local smeltButtonPos = { x = 30, y = 350 }
+local makeLastButtonPos = { x = 285, y = 415 }
 
 function TargetByItem(id)
 	UO.LTargetID = id
 	UO.LTargetKind = 1
-	UO.Macro(22,0)
+	UO.Macro(22, 0)
 end
 
 function GetIngot()
@@ -77,6 +77,7 @@ function Make()
 	Gump.ClickPos(makeLastButtonPos)
 	WaitForSmithGump(5000)
 end
+
 function MakeAndMelt()
 	local created = GetCreatedItem()
 	if created == nil then
@@ -97,4 +98,4 @@ while GetTong() ~= nil and GetIngotCount() > 20 do
 end
 WaitForSmithGump(5000)
 CloseSmithGump()
-]]--
+]] --

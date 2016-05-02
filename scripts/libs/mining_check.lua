@@ -14,11 +14,11 @@ function cls:ready()
 end
 
 function cls:isPickAxeUsing()
-	return myjournal:findNextJournal(1000,MINING_START)
+	return myjournal:findNextJournal(1000, MINING_START)
 end
 
 function cls:check()
-	local res = myjournal:findNextJournal(1000,MINING_FAIL,MINING_SUCCESS,MINING_GEM)
+	local res = myjournal:findNextJournal(1000, MINING_FAIL, MINING_SUCCESS, MINING_GEM)
 	myjournal:clear()
 	return res
 end

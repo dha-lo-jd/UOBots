@@ -1,11 +1,11 @@
 PATH = {}
 
-PATH.Base = getinstalldir().."UOBots/"
+PATH.Base = getinstalldir() .. "UOBots/"
 
-PATH.Scripts = PATH.Base.."scripts/"
+PATH.Scripts = PATH.Base .. "scripts/"
 
-PATH.Resource = getinstalldir().."res/"
+PATH.Resource = getinstalldir() .. "res/"
 
-PATH.Libs = PATH.Scripts.."libs/"
+PATH.Libs = PATH.Scripts .. "libs/"
 
-PATH.Downloads = PATH.Scripts.."downloads/"
+PATH.Downloads = PATH.Scripts .. "downloads/"
